@@ -1,0 +1,43 @@
+# Locked production-compatible calculation specification.
+macro:
+  states: 4
+  features: [inflation_yoy, growth_yoy, inflation_gap_regime, unrate_level]
+  starts: 20
+  min_history: 8
+  sticky_strength: 8.0
+  ensemble_top_n: 5
+  seed: 42
+  forecast_horizons: [1, 2, 4]
+
+financial:
+  states: 5
+  features:
+    - eq_global_yoy
+    - credit_excess_yoy
+    - commodity_yoy
+    - usd_broad_yoy
+    - bond_vol_4q
+    - cross_asset_dispersion_1q
+    - stock_bond_corr_4q
+  starts: 20
+  min_history: 8
+  sticky_strength: 8.0
+  ensemble_top_n: 5
+  seed: 42
+  forecast_horizons: [1, 2, 4]
+
+allocation:
+  benchmark: {equity: 0.65, bond: 0.35}
+  macro_equity_by_state: [0.75, 0.65, 0.55, 0.45]
+  financial_conviction_by_state: [0.50, 0.75, 0.50, 1.00, 0.75]
+
+bond_sleeve:
+  rules:
+    - {name: hedge_friendly, max: 0.10, bond_share: 1.00, cash_share: 0.00}
+    - {name: hedge_weakened, min: 0.10, max: 0.20, bond_share: 0.90, cash_share: 0.10}
+    - {name: hedge_poor, min: 0.20, bond_share: 0.80, cash_share: 0.20}
+
+country_factor:
+  rolling_window: 252
+  strength_percentiles: [0.33, 0.67]
+  active_budget: {weak: 0.00, medium: 0.05, strong: 0.10}
