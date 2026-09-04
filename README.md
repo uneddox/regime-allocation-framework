@@ -112,6 +112,7 @@ rules, not claims of universal optimality or personal investment advice.
 
 ## Documentation
 
+- [Changelog](CHANGELOG.md)
 - [Methodology](docs/methodology.md)
 - [Data contracts](docs/data-contracts.md)
 - [Production parity](docs/production-parity.md)
