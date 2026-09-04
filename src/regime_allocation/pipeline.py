@@ -175,7 +175,7 @@ def run_pipeline(
     latest_macro = macro_result.gamma_filtered[-1]
     latest_financial = financial_result.gamma_filtered[-1]
     summary = {
-        "framework_version": "0.2.0-production-parity",
+        "framework_version": "0.3.0-production-parity",
         "model_spec": {
             "macro": config["macro"],
             "financial": config["financial"],

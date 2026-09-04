@@ -176,8 +176,18 @@ def normalize_financial_prices(frame: pd.DataFrame, spec: FinancialBasketSpec) -
     return prices
 
 
-def _mean_price(prices: pd.DataFrame, columns: tuple[str, ...]) -> pd.Series:
-    return prices[list(columns)].astype(float).mean(axis=1)
+def _equal_weight_return_index(prices: pd.DataFrame, columns: tuple[str, ...]) -> pd.Series:
+    """Build a synthetic index from equally weighted constituent period returns.
+
+    The basket is rebalanced to equal constituent weights at every observation.
+    Averaging raw index levels would instead weight constituents by their arbitrary
+    quoted level.
+    """
+    constituent_returns = prices[list(columns)].astype(float).pct_change(fill_method=None)
+    basket_returns = constituent_returns.mean(axis=1, skipna=False)
+    if not basket_returns.empty:
+        basket_returns.iloc[0] = 0.0
+    return (1.0 + basket_returns).cumprod() * 100.0
 
 
 def _rolling_drawdown(levels: pd.Series, window: int = 4) -> pd.Series:
@@ -190,11 +200,11 @@ def prepare_financial_features(
     spec = spec or FinancialBasketSpec()
     prices = normalize_financial_prices(price_frame, spec)
     composite = pd.DataFrame(index=prices.index)
-    composite["eq_us"] = _mean_price(prices, spec.us_equity)
-    composite["eq_global"] = _mean_price(prices, spec.global_equity)
-    composite["bond_safe"] = _mean_price(prices, spec.safe_bonds)
-    composite["credit"] = _mean_price(prices, spec.credit)
-    composite["commodity"] = _mean_price(prices, spec.commodity)
+    composite["eq_us"] = _equal_weight_return_index(prices, spec.us_equity)
+    composite["eq_global"] = _equal_weight_return_index(prices, spec.global_equity)
+    composite["bond_safe"] = _equal_weight_return_index(prices, spec.safe_bonds)
+    composite["credit"] = _equal_weight_return_index(prices, spec.credit)
+    composite["commodity"] = _equal_weight_return_index(prices, spec.commodity)
     composite["dxy"] = prices[spec.dxy].astype(float)
     composite["usdeur"] = 1.0 / prices[spec.eurusd].astype(float)
     composite["usdjpy"] = 1.0 / prices[spec.jpyusd].astype(float)

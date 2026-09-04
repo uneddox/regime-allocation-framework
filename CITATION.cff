@@ -2,6 +2,6 @@ cff-version: 1.2.0
 title: Regime Allocation Framework
 message: If you use this software, please cite this repository and the version used.
 type: software
-version: 0.2.0
-date-released: 2026-08-26
+version: 0.3.0
+date-released: 2026-09-04
 license: MIT

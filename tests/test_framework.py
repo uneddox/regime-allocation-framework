@@ -13,6 +13,7 @@ from regime_allocation.features import (
     FINANCIAL_FEATURE_COLUMNS,
     MACRO_FEATURE_COLUMNS,
     FinancialBasketSpec,
+    _equal_weight_return_index,
     prepare_financial_features,
     prepare_macro_features,
 )
@@ -63,6 +64,20 @@ def test_exact_feature_schemas(tmp_path) -> None:
     assert set(FinancialBasketSpec().required_columns()).issubset(
         pd.read_csv(paths["financial"], nrows=1).columns
     )
+
+
+def test_financial_basket_equal_weights_constituent_returns() -> None:
+    prices = pd.DataFrame(
+        {
+            "low_level": [100.0, 110.0, 121.0],
+            "high_level": [1000.0, 1000.0, 1100.0],
+        },
+        index=pd.date_range("2024-03-31", periods=3, freq="QE"),
+    )
+    basket = _equal_weight_return_index(prices, ("low_level", "high_level"))
+
+    # Period returns are (10% + 0%)/2 = 5%, then (10% + 10%)/2 = 10%.
+    np.testing.assert_allclose(basket.to_numpy(), [100.0, 105.0, 115.5])
 
 
 def test_multistart_ensemble_is_deterministic(tmp_path) -> None:
@@ -148,7 +163,7 @@ def test_end_to_end_continuity_pipeline(tmp_path) -> None:
         macro_baseline_dir=bundles["macro"],
         financial_baseline_dir=bundles["financial"],
     )
-    assert summary["framework_version"] == "0.2.0-production-parity"
+    assert summary["framework_version"] == "0.3.0-production-parity"
     assert summary["model_spec"]["continuity"] == {
         "macro_locked": True,
         "financial_locked": True,
@@ -161,7 +176,7 @@ def test_end_to_end_continuity_pipeline(tmp_path) -> None:
         country_sums.sort_index().to_numpy(),
         equity.loc[country_sums.sort_index().index, "final_equity_weight"].to_numpy(),
     )
-    assert json.loads((output / "summary.json").read_text())["framework_version"].startswith("0.2")
+    assert json.loads((output / "summary.json").read_text())["framework_version"].startswith("0.3")
 
 
 def test_forecast_uses_ensemble(tmp_path) -> None:

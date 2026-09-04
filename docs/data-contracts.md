@@ -22,6 +22,9 @@ are defined in `FinancialBasketSpec`:
 The precise full column strings are visible in `src/regime_allocation/features.py`. Identifiers define the schema;
 no observations from these series are included.
 
+Every basket constituent must have a valid level at each observation. Constituent period returns are equally
+weighted and compounded into a synthetic index; raw index levels are never averaged across constituents.
+
 ## Prepared Financial continuity input
 
 `--financial-prepared` accepts a dated feature CSV instead of basket levels. It must contain the seven locked model

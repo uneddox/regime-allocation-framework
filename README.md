@@ -41,6 +41,9 @@ Macro features are inflation YoY, industrial-production growth YoY, inflation re
 median, and unemployment level. Financial features are global-equity YoY, credit excess YoY, commodity YoY,
 broad-dollar YoY, four-quarter bond volatility, cross-asset dispersion, and four-quarter stock-bond correlation.
 
+Multi-asset baskets are constructed by equally weighting constituent returns at each observation and compounding
+them into synthetic indices. Raw quoted index levels are not averaged.
+
 ## Continuity
 
 `baseline` freezes the baseline model frame, parameters, filtered/smoothed histories, state labels, ensemble

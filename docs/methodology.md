@@ -28,9 +28,11 @@ growth. The operating macro allocation uses the H+1 ensemble forecast as its cur
 
 ## Financial regime
 
-The input is the operating cross-asset basket schema. Equal-weight level composites are built for US equities,
-global equities, safe bonds, credit, and commodities, along with DXY and four inverse major-currency pairs.
-Seventeen report features are calculated. The locked K5 model uses seven of them:
+The input is the operating cross-asset basket schema. For US equities, global equities, safe bonds, credit, and
+commodities, constituent period returns are equally weighted and compounded into synthetic basket indices. The
+baskets are rebalanced to equal constituent weights at every observation and are independent of constituents'
+arbitrary quoted index levels. DXY and four inverse major-currency pairs remain individual series. Seventeen
+report features are calculated. The locked K5 model uses seven of them:
 
 1. Global-equity YoY
 2. Credit return minus safe-bond return, YoY
